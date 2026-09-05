@@ -1,85 +1,23 @@
-const API_URL = "https://final-project-phi-brown.vercel.app/api";
+import { apiRequest } from "./apiRequest";
 
-export const getTenants = async () => {
-  const response = await fetch(`${API_URL}/tenants`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch tenants");
-  }
+export const getTenants = () => apiRequest("/tenants");
 
-  return response.json();
-};
+export const getTenant = (id) => apiRequest(`/tenants/${id}`);
 
-export const getTenant = async (id) => {
-  const response = await fetch(`${API_URL}/tenants/${id}`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch tenant");
-  }
-
-  return response.json();
-};
-
-export const createTenant = async (tenant) => {
-  const response = await fetch(`${API_URL}/tenants`, {
+export const createTenant = (tenant) =>
+  apiRequest("/tenants", {
     method: "POST",
-
-    headers: {
-      "Content-Type": "application/json"
-    },
-
     body: JSON.stringify(tenant)
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to create tenant");
-  }
+export const updateTenant = (id, tenant) =>
+  apiRequest(`/tenants/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(tenant)
+  });
 
-  return response.json();
-};
+export const activateTenant = (id) =>
+  apiRequest(`/tenants/${id}/activate`, { method: "PATCH" });
 
-export const updateTenant = async (id, tenant) => {
-  const response = await fetch(
-    `${API_URL}/tenants/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(tenant)
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to update tenant");
-  }
-
-  return response.json();
-};
-export const activateTenant = async (id) => {
-  const response = await fetch(
-    `${API_URL}/tenants/${id}/activate`,
-    {
-      method: "PATCH"
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to activate tenant");
-  }
-
-  return response.json();
-};
-export const deactivateTenant = async (id) => {
-  const response = await fetch(
-    `${API_URL}/tenants/${id}/deactivate`,
-    {
-      method: "PATCH"
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to deactivate tenant");
-  }
-
-  return response.json();
-};
+export const deactivateTenant = (id) =>
+  apiRequest(`/tenants/${id}/deactivate`, { method: "PATCH" });

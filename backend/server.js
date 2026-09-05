@@ -9,14 +9,14 @@ const roleRoutes = require("./routes/roleRoute");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
 app.use(express.json());
-
-app.use("/api/tenants", tenantRoutes);
-app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/organizations", organizationRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/roles", roleRoutes);
 
 app.get("/", (req, res) => {
   res.json({
@@ -29,6 +29,28 @@ app.get("/", (req, res) => {
       roles: "/api/roles"
     }
   });
+});
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "API is healthy" });
+});
+
+app.use("/api/tenants", tenantRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/organizations", organizationRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/roles", roleRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Route not found",
+    path: req.originalUrl
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: "Internal server error" });
 });
 
 const PORT = process.env.PORT || 3000;
